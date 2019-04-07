@@ -146,11 +146,11 @@ class Signin extends Component {
                         <button type="button" onClick={this.handleSignout}>
                             Sign out
                         </button>
-                        <Link href="/">
-                            <a>Go to homepage</a>
-                        </Link>
                     </>
                 )}
+                <Link href="/">
+                    <a>Go to homepage</a>
+                </Link>
             </div>
         );
     }
