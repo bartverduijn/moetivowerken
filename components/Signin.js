@@ -3,7 +3,9 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'isomorphic-unfetch';
+import Link from 'next/link';
 import clientCredentials from '../credentials/clientCreds';
+import Dashboard from './Dashboard';
 
 class Signin extends Component {
     // Check if there is a token, and add the user prop
@@ -19,11 +21,17 @@ class Signin extends Component {
             email: '',
             password: '',
             user: props.user,
+            data: {},
+            unsubscribe: null,
         };
     }
 
     componentDidMount() {
-        firebase.initializeApp(clientCredentials);
+        try {
+            firebase.initializeApp(clientCredentials);
+        } catch (err) {
+            console.error(err);
+        }
 
         // If there is already a logged in user, immediately handle db
         if (this.state.user) this.addDbListener();
@@ -56,10 +64,26 @@ class Signin extends Component {
         console.log('User is logged in! 🚀');
 
         const db = firebase.firestore();
+        const unsubscribe = db.collection('data').onSnapshot(
+            querySnapshot => {
+                const data = {};
+                querySnapshot.forEach(tuple => {
+                    data[tuple.id] = tuple.data();
+                });
+                // If we found data in the database
+                if (data) this.setState({ data });
+            },
+            err => console.error(err)
+        );
+
+        this.setState({ unsubscribe });
     };
 
     removeDbListener = () => {
         console.log('User is not logged in... 😢');
+        if (this.state.unsubscribe) {
+            this.state.unsubscribe();
+        }
     };
 
     saveToState = e => {
@@ -79,7 +103,7 @@ class Signin extends Component {
     };
 
     render() {
-        const { email, password, user } = this.state;
+        const { email, password, user, data } = this.state;
         return (
             <div>
                 {!user ? (
@@ -117,9 +141,15 @@ class Signin extends Component {
                         </fieldset>
                     </form>
                 ) : (
-                    <button type="button" onClick={this.handleSignout}>
-                        Sign out
-                    </button>
+                    <>
+                        <Dashboard data={data} />
+                        <button type="button" onClick={this.handleSignout}>
+                            Sign out
+                        </button>
+                        <Link href="/">
+                            <a>Go to homepage</a>
+                        </Link>
+                    </>
                 )}
             </div>
         );
