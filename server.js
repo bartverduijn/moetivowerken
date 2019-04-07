@@ -12,7 +12,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 const port = 3000;
 
-const initializeFirebase = admin.initializeApp(
+const initializedFirebase = admin.initializeApp(
     {
         /* eslint-disable-next-line global-require */
         credential: admin.credential.cert(require('./credentials/serverCreds')),
@@ -31,16 +31,39 @@ app.prepare().then(() => {
             saveUninitialized: true,
             store: new FileStore({ path: '/tmp/sessions', secret: process.env.SESSION_SECRET }),
             resave: false,
-            rolling: true, // add to each resoibse
+            rolling: true, // add to each response
             cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // week
         })
     );
     /* eslint-disable-next-line no-shadow */
     server.use((req, res, next) => {
-        req.firebaseServer = initializeFirebase;
+        req.firebaseServer = initializedFirebase;
         next();
     });
 
+    server.post('/api/login', (req, res) => {
+        if (!req.body) return res.sendStatus(400);
+        const { token } = req.body;
+
+        // Compare the credentials of the user with the credentials in the database
+        initializedFirebase
+            .auth()
+            .verifyIdToken(token)
+            .then(decodedToken => {
+                req.session.decodedToken = decodedToken;
+                return decodedToken;
+            })
+            .then(decodedToken => res.json({ status: true, decodedToken }))
+            .catch(error => res.json({ error }));
+        return handle(req, res);
+    });
+
+    server.post('/api/logout', (req, res) => {
+        req.session.decodedToken = null;
+        res.json({ status: true });
+    });
+
+    // Let Next handle all get-requests
     server.get('*', (req, res) => {
         return handle(req, res); // pass routes to next
     });

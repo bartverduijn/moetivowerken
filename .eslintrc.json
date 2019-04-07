@@ -20,23 +20,11 @@
         "jest": true
     },
     "rules": {
-        "no-unused-vars": [
-            1,
-            {
-                "argsIgnorePattern": "res|next|^err|props"
-            }
+        "indent": [
+            2,
+            4
         ],
-        "react/react-in-jsx-scope": 0,
-        "react/jsx-filename-extension": [
-            1,
-            {
-                "extensions": [
-                    ".js",
-                    ".jsx"
-                ]
-            }
-        ],
-        "react/no-unescaped-entities": 0,
+        "no-console": 0,
         "jsx-a11y/anchor-is-valid": [
             1,
             {
@@ -46,22 +34,39 @@
                 ]
             }
         ],
-        "react/jsx-indent": [
-            2,
-            4
-        ],
-        "indent": [
-            2,
-            4
+        "no-unused-vars": [
+            1,
+            {
+                "argsIgnorePattern": "res|next|^err"
+            }
         ],
         "prettier/prettier": [
             "error",
             {
-                "trailingComma": "es5",
-                "tabWidth": 4,
+                "printWidth": 100,
                 "singleQuote": true,
-                "printWidth": 100
+                "tabWidth": 4,
+                "trailingComma": "es5"
             }
-        ]
+        ],
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx"
+                ]
+            }
+        ],
+        "react/jsx-indent": [
+            2,
+            4
+        ],
+        "react/jsx-indent-props": 0,
+        "react/jsx-one-expression-per-line": 0,
+        "react/no-unescaped-entities": 0,
+        "react/prop-types": 1,
+        "react/react-in-jsx-scope": 0,
+        "react/destructuring-assignment": 0
     }
 }
