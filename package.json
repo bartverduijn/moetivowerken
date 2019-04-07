@@ -4,7 +4,9 @@
   "description": "Maakt deze malse makker vandaag de Efteling onveilig? En zo ja, welke attracties moeten mijn dochters omzeilen? 🤔",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next -p 3000",
+    "build": "next build",
+    "start": "next start"
   },
   "repository": {
     "type": "git",
@@ -26,5 +28,10 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
     "prettier": "^1.16.4"
+  },
+  "dependencies": {
+    "next": "^8.0.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }
