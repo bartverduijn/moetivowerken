@@ -4,7 +4,7 @@
   "description": "Maakt deze malse makker vandaag de Efteling onveilig? En zo ja, welke attracties moeten mijn dochters omzeilen? 🤔",
   "main": "index.js",
   "scripts": {
-    "dev": "next -p 3000",
+    "dev": "nodemon server.js",
     "build": "next build",
     "start": "next start"
   },
@@ -30,8 +30,17 @@
     "prettier": "^1.16.4"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "firebase": "^5.9.3",
+    "firebase-admin": "^7.2.0",
+    "isomorphic-unfetch": "^3.0.0",
     "next": "^8.0.4",
+    "nodemon": "^1.18.10",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "session-file-store": "^1.2.0"
   }
 }
