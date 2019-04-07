@@ -1,0 +1,19 @@
+{
+  "name": "moetivowerken",
+  "version": "0.0.1",
+  "description": "Maakt deze malse makker vandaag de Efteling onveilig? En zo ja, welke attracties moeten mijn dochters omzeilen? 🤔",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bartverduijn/moetivowerken.git"
+  },
+  "author": "Bart Verduijn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bartverduijn/moetivowerken/issues"
+  },
+  "homepage": "https://github.com/bartverduijn/moetivowerken#readme"
+}
