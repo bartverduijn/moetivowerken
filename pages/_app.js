@@ -1,6 +1,7 @@
 import App, { Container } from 'next/app';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/auth';
 import clientCredentials from '../credentials/clientCreds';
 import FirebaseProvider from '../components/FirebaseProvider';
 

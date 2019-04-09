@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/firestore';
 import 'isomorphic-unfetch';
 import Link from 'next/link';
-import clientCredentials from '../credentials/clientCreds';
 import Dashboard from './Dashboard';
+import FirestoreCollection from './FirestoreCollection';
 
 class Signin extends Component {
     // Check if there is a token, and add the user prop
@@ -14,28 +13,13 @@ class Signin extends Component {
         return { user };
     }
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            email: '',
-            password: '',
-            user: props.user,
-            data: {},
-            unsubscribe: null,
-        };
-    }
+    state = {
+        email: '',
+        password: '',
+        user: this.props.user,
+    };
 
     componentDidMount() {
-        try {
-            firebase.initializeApp(clientCredentials);
-        } catch (err) {
-            console.error(err);
-        }
-
-        // If there is already a logged in user, immediately handle db
-        if (this.state.user) this.addDbListener();
-
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
                 this.setState({ user });
@@ -49,42 +33,16 @@ class Signin extends Component {
                             body: JSON.stringify({ token }),
                         })
                     )
-                    .then(res => this.addDbListener());
+                    .then(res => console.log('Login was succesvol!', res));
             }
 
             this.setState({ user: null });
             return fetch('/api/logout', {
                 method: 'POST',
                 credentials: 'same-origin',
-            }).then(() => this.removeDbListener());
+            }).then(res => console.log('Logout was succesvol!', res));
         });
     }
-
-    addDbListener = () => {
-        console.log('User is logged in! 🚀');
-
-        const db = firebase.firestore();
-        const unsubscribe = db.collection('data').onSnapshot(
-            querySnapshot => {
-                const data = {};
-                querySnapshot.forEach(tuple => {
-                    data[tuple.id] = tuple.data();
-                });
-                // If we found data in the database
-                if (data) this.setState({ data });
-            },
-            err => console.error(err)
-        );
-
-        this.setState({ unsubscribe });
-    };
-
-    removeDbListener = () => {
-        console.log('User is not logged in... 😢');
-        if (this.state.unsubscribe) {
-            this.state.unsubscribe();
-        }
-    };
 
     saveToState = e => {
         this.setState({ [e.target.name]: e.target.value });
@@ -103,7 +61,8 @@ class Signin extends Component {
     };
 
     render() {
-        const { email, password, user, data } = this.state;
+        const { db } = this.props;
+        const { email, password, user } = this.state;
         return (
             <div>
                 {!user ? (
@@ -142,7 +101,23 @@ class Signin extends Component {
                     </form>
                 ) : (
                     <>
-                        <Dashboard data={data} />
+                        <FirestoreCollection
+                            db={db}
+                            path="data"
+                            limit={1}
+                            orderBy={{ order: 'date', sort: 'desc' }}
+                        >
+                            {({ isLoading, data }) => (
+                                <div>
+                                    {isLoading ? (
+                                        <p>Loading...</p>
+                                    ) : (
+                                        <Dashboard db={db} data={data} />
+                                    )}
+                                </div>
+                            )}
+                        </FirestoreCollection>
+
                         <button type="button" onClick={this.handleSignout}>
                             Sign out
                         </button>

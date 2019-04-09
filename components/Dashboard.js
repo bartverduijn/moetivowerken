@@ -1,29 +1,14 @@
 import React, { Component } from 'react';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'isomorphic-unfetch';
 
 class Dashboard extends Component {
     constructor(props) {
         super(props);
+        const { isAtEfteling, ride } = props.data[0];
 
         this.state = {
-            isAtEfteling: false,
-            ride: '',
-            lastDate: '',
+            isAtEfteling,
+            ride,
         };
-    }
-
-    static getDerivedStateFromProps(nextProps, prevState) {
-        const lastDate = [...Object.keys(nextProps.data).sort()].pop();
-        if (lastDate && lastDate !== prevState.lastDate) {
-            return {
-                lastDate,
-                isAtEfteling: nextProps.data[lastDate].isAtEfteling,
-                ride: nextProps.data[lastDate].ride,
-            };
-        }
-        return null;
     }
 
     saveToState = e => {
@@ -32,8 +17,8 @@ class Dashboard extends Component {
     };
 
     handleSubmit = async e => {
+        const { db } = this.props;
         e.preventDefault();
-        const db = firebase.firestore();
         const date = new Date().getTime();
         if (!this.state.isAtEfteling) await this.setState({ ride: '' });
         db.collection('data')
