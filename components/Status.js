@@ -1,71 +1,31 @@
-import React, { Component } from 'react';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'isomorphic-unfetch';
-import Link from 'next/link';
-import clientCredentials from '../credentials/clientCreds';
+import React from 'react';
+import FirestoreCollection from './FirestoreCollection';
+import { FirebaseContext } from './FirebaseProvider';
 
-class Status extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            isAtEfteling: false,
-            ride: '',
-            lastDate: '',
-        };
-    }
-
-    componentDidMount() {
-        try {
-            firebase.initializeApp(clientCredentials);
-        } catch (err) {
-            console.error(err);
-        }
-        this.addDbListener();
-    }
-
-    handleData = data => {
-        const lastDate = [...Object.keys(data).sort()].pop();
-        this.setState({
-            lastDate,
-            isAtEfteling: data[lastDate].isAtEfteling,
-            ride: data[lastDate].ride,
-        });
-    };
-
-    addDbListener = () => {
-        const db = firebase.firestore();
-        const unsubscribe = db.collection('data').onSnapshot(
-            querySnapshot => {
-                const data = {};
-                querySnapshot.forEach(tuple => {
-                    data[tuple.id] = tuple.data();
-                });
-                // If we found data in the database
-                if (data) this.handleData(data);
-            },
-            err => console.error(err)
-        );
-
-        this.setState({ unsubscribe });
-    };
-
-    render() {
-        const { isAtEfteling, ride, lastDate } = this.state;
-        return (
-            <>
-                <div>
-                    <h2>{isAtEfteling ? 'JA' : 'NEE'}</h2>
-                    <p>{ride}</p>
-                    <p>{lastDate}</p>
-                </div>
-                <Link href="/admin">
-                    <a>Log in</a>
-                </Link>
-            </>
-        );
-    }
-}
-
+const Status = () => (
+    <FirebaseContext.Consumer>
+        {db => (
+            <FirestoreCollection
+                path="data"
+                limit={1}
+                orderBy={{ order: 'date', sort: 'desc' }}
+                db={db}
+            >
+                {({ isLoading, data }) => (
+                    <div>
+                        {isLoading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <div>
+                                <p>{data[0].isAtEfteling ? 'Ja' : 'Nee'}</p>
+                                <p>{data[0].ride}</p>
+                                <p>{data[0].date}</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </FirestoreCollection>
+        )}
+    </FirebaseContext.Consumer>
+);
 export default Status;
