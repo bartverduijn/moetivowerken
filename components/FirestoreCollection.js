@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FirebaseContext } from './FirebaseProvider';
+import { withFirebaseConsumer } from './FirebaseContext';
 
 class FirestoreCollection extends Component {
     state = {
@@ -26,7 +26,12 @@ class FirestoreCollection extends Component {
     addFirestoreListener = () => {
         console.log('add FirestoreListener...');
 
-        const { db, path, limit, orderBy } = this.props;
+        const {
+            firebase: { db },
+            path,
+            limit,
+            orderBy,
+        } = this.props;
         const { order, sort } = orderBy;
 
         let collection = db.collection(path);
@@ -65,4 +70,4 @@ class FirestoreCollection extends Component {
     }
 }
 
-export default FirestoreCollection;
+export default withFirebaseConsumer(FirestoreCollection);
