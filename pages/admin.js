@@ -1,9 +1,19 @@
 import React from 'react';
-import Signin from '../components/Signin';
-import { FirebaseContext } from '../components/FirebaseProvider';
+import Link from 'next/link';
+import FirebaseSignIn from '../components/FirebaseSignIn';
 
-const Admin = props => (
-    <FirebaseContext.Consumer>{db => <Signin {...props} db={db} />}</FirebaseContext.Consumer>
+import AdminDashboard from '../components/AdminDashboard';
+
+const Admin = () => (
+    <>
+        <FirebaseSignIn>
+            <AdminDashboard />
+        </FirebaseSignIn>
+
+        <Link href="/">
+            <a>Go to homepage</a>
+        </Link>
+    </>
 );
 
 export default Admin;
