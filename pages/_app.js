@@ -3,7 +3,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import clientCredentials from '../credentials/clientCreds';
-import FirebaseProvider from '../components/FirebaseProvider';
+import { FirebaseProvider } from '../components/FirebaseContext';
 
 // If there isn't a initialized firebase app yet
 if (firebase.apps.length === 0) {
