@@ -1,7 +1,7 @@
 # TODO
 
 * Styling! 💅
-* Add consumers to FirestoreCollection
 * Add propTypes
-* Maybe add Auth to provider
 * Deploy 🚀
+
+* SignInForm to own component and pass as a render prop to FirebaseSignIn
