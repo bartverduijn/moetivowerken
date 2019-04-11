@@ -1,31 +1,23 @@
 import React from 'react';
+import { format } from 'date-fns';
+import nl from 'date-fns/locale/nl';
 import FirestoreCollection from './FirestoreCollection';
-import { FirebaseContext } from './FirebaseProvider';
 
 const Status = () => (
-    <FirebaseContext.Consumer>
-        {db => (
-            <FirestoreCollection
-                path="data"
-                limit={1}
-                orderBy={{ order: 'date', sort: 'desc' }}
-                db={db}
-            >
-                {({ isLoading, data }) => (
+    <FirestoreCollection path="data" limit={1} orderBy={{ order: 'date', sort: 'desc' }}>
+        {({ isLoading, data }) => (
+            <div>
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : (
                     <div>
-                        {isLoading ? (
-                            <p>Loading...</p>
-                        ) : (
-                            <div>
-                                <p>{data[0].isAtEfteling ? 'Ja' : 'Nee'}</p>
-                                <p>{data[0].ride}</p>
-                                <p>{data[0].date}</p>
-                            </div>
-                        )}
+                        <p>{data[0].isAtEfteling ? 'Ja' : 'Nee'}</p>
+                        <p>{data[0].ride}</p>
+                        <p>{format(new Date(data[0].date), 'dddd D MMMM YYYY', { locale: nl })}</p>
                     </div>
                 )}
-            </FirestoreCollection>
+            </div>
         )}
-    </FirebaseContext.Consumer>
+    </FirestoreCollection>
 );
 export default Status;
