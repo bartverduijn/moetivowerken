@@ -16,4 +16,10 @@ const Admin = () => (
     </>
 );
 
+// Check if there is a token, and add the user prop
+Admin.getInitialProps = async ({ req }) => {
+    const user = req && req.session ? req.session.decodedToken : null;
+    return { user };
+};
+
 export default Admin;

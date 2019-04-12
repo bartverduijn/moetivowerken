@@ -3,12 +3,6 @@ import 'isomorphic-unfetch';
 import { withFirebaseConsumer } from './FirebaseContext';
 
 class FirebaseSignIn extends Component {
-    // Check if there is a token, and add the user prop
-    static async getInitialProps({ req }) {
-        const user = req && req.session ? req.session.decodedToken : null;
-        return { user };
-    }
-
     state = {
         email: '',
         password: '',
