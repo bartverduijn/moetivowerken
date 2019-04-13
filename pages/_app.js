@@ -4,6 +4,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import clientCredentials from '../credentials/clientCreds';
 import { FirebaseProvider } from '../components/FirebaseContext';
+import Page from '../components/Page';
 
 // If there isn't a initialized firebase app yet
 if (firebase.apps.length === 0) {
@@ -16,7 +17,9 @@ class MyApp extends App {
         return (
             <Container>
                 <FirebaseProvider firebase={firebase}>
-                    <Component {...pageProps} />
+                    <Page>
+                        <Component {...pageProps} />
+                    </Page>
                 </FirebaseProvider>
             </Container>
         );
