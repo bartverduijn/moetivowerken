@@ -4,9 +4,9 @@ import FirebaseSignIn from '../components/FirebaseSignIn';
 
 import AdminDashboard from '../components/AdminDashboard';
 
-const Admin = () => (
+const Admin = ({ user }) => (
     <>
-        <FirebaseSignIn>
+        <FirebaseSignIn user={user}>
             <AdminDashboard />
         </FirebaseSignIn>
 
