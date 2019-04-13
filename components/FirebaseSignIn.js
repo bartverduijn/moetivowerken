@@ -102,7 +102,12 @@ class FirebaseSignIn extends Component {
                         </fieldset>
                     </form>
                 ) : (
-                    children
+                    <>
+                        {children}
+                        <button type="button" onClick={e => this.handleSignout(auth)}>
+                            Sign out
+                        </button>
+                    </>
                 )}
             </div>
         );
