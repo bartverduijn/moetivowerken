@@ -1,5 +1,4 @@
 # Ignore secrets
-credentials
 *.env
 
 # Logs
