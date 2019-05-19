@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server.js",
     "build": "next build",
-    "start": "next start -p $PORT"
+    "start": "next start -p $PORT",
+    "heroku-postbuild": "next build"
   },
   "repository": {
     "type": "git",
