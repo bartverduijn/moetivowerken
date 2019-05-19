@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import { withFirebaseConsumer } from './FirebaseContext';
+import Toggle from './styles/Toggle';
+import FormStyles from './styles/FormStyles';
+import Card from './styles/Card';
 
 class AdminDashboard extends Component {
     state = {
         isAtEfteling: false,
         ride: '',
+        isLoading: false,
     };
 
     saveToState = e => {
@@ -19,48 +24,56 @@ class AdminDashboard extends Component {
             firebase: { db },
         } = this.props;
         e.preventDefault();
+        this.setState({ isLoading: true });
         const date = new Date().getTime();
         if (!this.state.isAtEfteling) await this.setState({ ride: '' });
         db.collection('data')
             .doc(`${date}`)
-            .set({ date, isAtEfteling: this.state.isAtEfteling, ride: this.state.ride });
-        this.setState({ isAtEfteling: false, ride: '' });
+            .set({ date, isAtEfteling: this.state.isAtEfteling, ride: this.state.ride })
+            .then(() => this.setState({ isLoading: false, isAtEfteling: false, ride: '' }))
+            .catch(err => console.error(err));
     };
 
     render() {
-        const { ride, isAtEfteling } = this.state;
+        const { ride, isAtEfteling, isLoading } = this.state;
         return (
-            <>
-                <form method="post" onSubmit={this.handleSubmit}>
-                    <fieldset>
-                        <h2>Mijn dashboard</h2>
-                        <label htmlFor="isAtEfteling">
-                            Vandaag werk ik in de Efteling:
-                            <input
-                                type="checkbox"
-                                name="isAtEfteling"
-                                id="isAtEfteling"
-                                checked={isAtEfteling}
-                                onChange={this.saveToState}
-                            />
-                        </label>
-                        <br />
-                        {isAtEfteling && (
-                            <label htmlFor="ride">
-                                Attractie:
+            <Card>
+                <FormStyles>
+                    <form method="post" onSubmit={this.handleSubmit}>
+                        {isLoading && <div className="loader">Loading...</div>}
+                        <fieldset disabled={isLoading}>
+                            <h2>Mijn Dashboard</h2>
+
+                            <Toggle>
                                 <input
-                                    type="text"
-                                    name="ride"
-                                    placeholder="attractie"
-                                    value={ride}
+                                    type="checkbox"
+                                    name="isAtEfteling"
+                                    id="isAtEfteling"
+                                    checked={isAtEfteling}
                                     onChange={this.saveToState}
                                 />
-                            </label>
-                        )}
-                        <button type="submit">Submit</button>
-                    </fieldset>
-                </form>
-            </>
+                                <label className="toggle" htmlFor="isAtEfteling">
+                                    In de Efteling:
+                                </label>
+                            </Toggle>
+
+                            {isAtEfteling && (
+                                <label htmlFor="ride">
+                                    Attractie:
+                                    <input
+                                        type="text"
+                                        name="ride"
+                                        placeholder="Joris en de Draak, Pandadroom, etc..."
+                                        value={ride}
+                                        onChange={this.saveToState}
+                                    />
+                                </label>
+                            )}
+                            <button type="submit">Submit</button>
+                        </fieldset>
+                    </form>
+                </FormStyles>
+            </Card>
         );
     }
 }

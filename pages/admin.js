@@ -11,7 +11,7 @@ const Admin = ({ user }) => (
         </FirebaseSignIn>
 
         <Link href="/">
-            <a>Go to homepage</a>
+            <a>Ga naar Home</a>
         </Link>
     </>
 );

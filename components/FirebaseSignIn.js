@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
 import 'isomorphic-unfetch';
+import styled from 'styled-components';
 import { withFirebaseConsumer } from './FirebaseContext';
+import FormStyles from './styles/FormStyles';
+import Card from './styles/Card';
+
+const SignOutButton = styled.button`
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    color: ${props => props.theme.red};
+`;
 
 class FirebaseSignIn extends Component {
     state = {
         email: '',
         password: '',
         user: this.props.user,
+        isLoading: false,
     };
 
     componentDidMount() {
@@ -27,7 +39,7 @@ class FirebaseSignIn extends Component {
                             body: JSON.stringify({ token }),
                         }).catch(err => console.error(err))
                     )
-                    .then(res => console.log('Login was succesvol!', res))
+                    .then(() => this.setState({ isLoading: false }))
                     .catch(err => console.error(err));
             }
 
@@ -36,7 +48,7 @@ class FirebaseSignIn extends Component {
                 method: 'POST',
                 credentials: 'same-origin',
             })
-                .then(res => console.log('Logout was succesvol!', res))
+                .then(() => this.setState({ isLoading: false }))
                 .catch(err => console.error(err));
         });
     }
@@ -63,50 +75,56 @@ class FirebaseSignIn extends Component {
             firebase: { auth },
             children,
         } = this.props;
-        const { email, password, user } = this.state;
+        const { email, password, user, isLoading } = this.state;
 
         return (
             <div>
                 {!user ? (
-                    <form
-                        method="post"
-                        onSubmit={e => {
-                            e.preventDefault();
-                            this.handleSignin(email, password, auth);
-                            return this.setState({ email: '', password: '' });
-                        }}
-                    >
-                        <fieldset>
-                            <h2>Sign in</h2>
-                            <label htmlFor="email">
-                                Email
-                                <input
-                                    type="email"
-                                    name="email"
-                                    placeholder="email"
-                                    value={email}
-                                    onChange={this.saveToState}
-                                />
-                            </label>
-                            <label htmlFor="password">
-                                Password
-                                <input
-                                    type="password"
-                                    name="password"
-                                    placeholder="password"
-                                    value={password}
-                                    onChange={this.saveToState}
-                                />
-                            </label>
-                            <button type="submit">Submit</button>
-                        </fieldset>
-                    </form>
+                    <Card>
+                        <FormStyles>
+                            <form
+                                method="post"
+                                onSubmit={e => {
+                                    e.preventDefault();
+                                    this.setState({ isLoading: true });
+                                    this.handleSignin(email, password, auth);
+                                    return this.setState({ email: '', password: '' });
+                                }}
+                            >
+                                {isLoading && <div className="loader">Loading...</div>}
+                                <fieldset disabled={isLoading}>
+                                    <h2>Log in met je account.</h2>
+                                    <label htmlFor="email">
+                                        Email
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            placeholder="johndoe@example.com"
+                                            value={email}
+                                            onChange={this.saveToState}
+                                        />
+                                    </label>
+                                    <label htmlFor="password">
+                                        Wachtwoord
+                                        <input
+                                            type="password"
+                                            name="password"
+                                            placeholder="Password"
+                                            value={password}
+                                            onChange={this.saveToState}
+                                        />
+                                    </label>
+                                    <button type="submit">Log in</button>
+                                </fieldset>
+                            </form>
+                        </FormStyles>
+                    </Card>
                 ) : (
                     <>
                         {children}
-                        <button type="button" onClick={e => this.handleSignout(auth)}>
-                            Sign out
-                        </button>
+                        <SignOutButton type="button" onClick={e => this.handleSignout(auth)}>
+                            Uitloggen
+                        </SignOutButton>
                     </>
                 )}
             </div>
